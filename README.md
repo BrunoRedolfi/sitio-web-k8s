@@ -33,9 +33,21 @@ Inicia Minikube:
 minikube start
 ```
 
-### 3. Aplicar los manifiestos de Kubernetes
+### 3. Montar el contenido estático en Minikube
 
-Asegúrate de estar dentro de la carpeta del proyecto y aplica los manifiestos de Kubernetes con los siguientes comandos:
+Para que el clúster pueda acceder a los archivos estáticos, es necesario montar la carpeta `html` del proyecto dentro del entorno de Minikube.
+
+Abre una **nueva terminal** y ejecuta el siguiente comando:
+
+```bash
+minikube mount /opt/projects/static-website-content/html:/opt/projects/static-website-content/html
+```
+
+⚠️ Este comando debe permanecer ejecutándose mientras Minikube esté en funcionamiento. No cierres la terminal.
+
+### 4. Aplicar los manifiestos de Kubernetes
+
+En una terminal aparte (no la del mount), asegúrate de estar dentro de la carpeta del proyecto y aplica los manifiestos de Kubernetes con los siguientes comandos:
 
 - Crear el volumen persistente:
 
@@ -61,7 +73,7 @@ kubectl apply -f /opt/projects/sitio-web-k8s/kubernetes-manifests/deployment.yam
 kubectl apply -f /opt/projects/sitio-web-k8s/kubernetes-manifests/service.yaml
 ```
 
-### 4. Verificar el despliegue
+### 5. Verificar el despliegue
 
 Puedes verificar que los pods y servicios estén corriendo correctamente con los siguientes comandos:
 
@@ -70,7 +82,7 @@ kubectl get pods
 kubectl get services
 ```
 
-### 5. Acceder al sitio web
+### 6. Acceder al sitio web
 
 Minikube proporciona una forma fácil de acceder a los servicios a través de un proxy. Ejecuta el siguiente comando para obtener la URL de tu servicio:
 
@@ -80,7 +92,7 @@ minikube service sitio-web-service --url
 
 Esto abrirá un navegador con la URL de tu sitio web desplegado.
 
-### 6. Parar Minikube (opcional)
+### 7. Parar Minikube (opcional)
 
 Cuando termines de trabajar, puedes parar Minikube con el siguiente comando:
 
@@ -88,7 +100,9 @@ Cuando termines de trabajar, puedes parar Minikube con el siguiente comando:
 minikube stop
 ```
 
-### 7. Subir cambios al repositorio
+Si cerraste la terminal donde corría el mount, deberás volver a montarlo la próxima vez que inicies Minikube.
+
+### 8. Subir cambios al repositorio
 
 Cada vez que realices cambios en el repositorio, no olvides hacer commits y subirlos a GitHub:
 
@@ -96,4 +110,4 @@ Cada vez que realices cambios en el repositorio, no olvides hacer commits y subi
 git add .
 git commit -m "Descripción de los cambios"
 git push origin main
-
+```
