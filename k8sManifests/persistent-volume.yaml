@@ -6,7 +6,7 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /mnt/data/sitio-web
-
+    path: /opt/projects/static-website-content/html
