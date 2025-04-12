@@ -6,7 +6,8 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /opt/projects/static-website-content/html
+    path:  /mnt/data/static-website-content/html
+  storageClassName: ""

@@ -15,13 +15,12 @@ spec:
       containers:
       - name: sitio-web
         image: nginx:latest
-        ports:
-        - containerPort: 80
         volumeMounts:
-        - name: web-content
+        - name: html-content
           mountPath: /usr/share/nginx/html
       volumes:
-      - name: web-content
+      - name: html-content
         persistentVolumeClaim:
           claimName: web-content-pvc
+
 
