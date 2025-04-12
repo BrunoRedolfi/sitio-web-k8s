@@ -45,7 +45,7 @@ minikube mount /opt/projects/static-website-content/html:/opt/projects/static-we
 
 ⚠️ Este comando debe permanecer ejecutándose mientras Minikube esté en funcionamiento. No cierres la terminal.
 
-### 4. Aplicar los manifiestos de Kubernetes
+### 4. Aplicar los manifiestos de Kubernetes (esto se puede realizar simplemente ejecutando $./deploy.sh )
 
 En una terminal aparte (no la del mount), asegúrate de estar dentro de la carpeta del proyecto y aplica los manifiestos de Kubernetes con los siguientes comandos:
 
