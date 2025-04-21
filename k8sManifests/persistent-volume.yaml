@@ -9,5 +9,5 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path:  /mnt/data/static-website-content/html
+    path:  /mnt/data/static-website/html
   storageClassName: ""

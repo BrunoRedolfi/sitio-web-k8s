@@ -19,7 +19,7 @@ Primero, clona ambos repositorios en un directorio común. Vamos a usar `/opt/pr
 ```bash
 sudo mkdir -p /opt/projects
 cd /opt/projects
-git clone https://github.com/BrunoRedolfi/static-website-content.git
+git clone https://github.com/BrunoRedolfi/static-website.git
 git clone https://github.com/BrunoRedolfi/sitio-web-k8s.git
 ```
 
@@ -40,13 +40,12 @@ Para que el clúster pueda acceder a los archivos estáticos, es necesario monta
 Abre una **nueva terminal** y ejecuta el siguiente comando:
 
 ```bash
-minikube mount /opt/projects/static-website-content:/mnt/data/static-website-content
+minikube mount /opt/projects/static-website-content/html:/opt/projects/static-website/html
 ```
 
 ⚠️ Este comando debe permanecer ejecutándose mientras Minikube esté en funcionamiento. No cierres la terminal.
 
 ### 4. Aplicar los manifiestos de Kubernetes
-(esto se puede realizar simplemente ejecutando $./deploy.sh )
 
 En una terminal aparte (no la del mount), asegúrate de estar dentro de la carpeta del proyecto y aplica los manifiestos de Kubernetes con los siguientes comandos:
 
