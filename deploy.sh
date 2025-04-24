@@ -37,21 +37,6 @@ echo "🔐 Ajustando permisos para que NGINX pueda leer los archivos..."
 sudo chown -R 101:101 "$HTML_PATH"
 sudo chmod -R 755 "$HTML_PATH"
 
-
-echo "🧽 Verificando si el PVC ya existe para recrearlo..."
-if minikube kubectl -- get pvc web-content-pvc >/dev/null 2>&1; then
-  echo "📛 Forzando eliminación de finalizers del PVC (modo desarrollo)..."
-  minikube kubectl -- patch pvc web-content-pvc -p '{"metadata":{"finalizers":null}}' --type=merge || true
-  echo "🗑 Borrando PersistentVolumeClaim existente..."
-  minikube kubectl -- delete pvc web-content-pvc --grace-period=0 --force || true
-fi
-sleep 2
-
-echo "🧽 Verificando si el PV ya existe para recrearlo..."
-if minikube kubectl -- get pv web-content-pv >/dev/null 2>&1; then
-  echo "🗑 Borrando PersistentVolume existente..."
-  minikube kubectl -- delete pv web-content-pv
-fi
 echo "📦 Aplicando los manifiestos de Kubernetes..."
 minikube kubectl -- apply -f "$MANIFEST_PATH/persistent-volume.yaml"
 minikube kubectl -- apply -f "$MANIFEST_PATH/persistent-volume-claim.yaml"
