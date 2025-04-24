@@ -23,7 +23,7 @@ git clone https://github.com/BrunoRedolfi/static-website.git
 git clone https://github.com/BrunoRedolfi/sitio-web-k8s.git
 ```
 
-El contenido del sitio web se encuentra en `/opt/projects/static-website-content/html/`.
+El contenido del sitio web se encuentra en `/opt/projects/static-website/html/`.
 
 ### 2. Crear y configurar el clúster en Minikube
 
