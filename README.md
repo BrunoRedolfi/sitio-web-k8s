@@ -40,7 +40,7 @@ Para que el clúster pueda acceder a los archivos estáticos, es necesario monta
 Abre una **nueva terminal** y ejecuta el siguiente comando:
 
 ```bash
-minikube mount /opt/projects/static-website-content/html:/opt/projects/static-website/html
+minikube mount /opt/projects/static-website/html:/opt/projects/static-website/html
 ```
 
 ⚠️ Este comando debe permanecer ejecutándose mientras Minikube esté en funcionamiento. No cierres la terminal.
