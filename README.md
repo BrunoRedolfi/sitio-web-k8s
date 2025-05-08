@@ -52,7 +52,7 @@ En una terminal aparte (no la del mount), asegúrate de estar dentro de la carpe
 - Crear el volumen persistente:
 
 ```bash
-kubectl apply -f /opt/projects/sitio-web-k8s/kubernetes-manifests/persistent-volume.yaml
+kubectl apply -f /opt/projects/sitio-web-k8s/k8sManifests/persistent-volume.yaml
 ```
 
 - Crear la reclamación de volumen persistente:
