@@ -58,19 +58,19 @@ kubectl apply -f /opt/projects/sitio-web-k8s/kubernetes-manifests/persistent-vol
 - Crear la reclamación de volumen persistente:
 
 ```bash
-kubectl apply -f /opt/projects/sitio-web-k8s/kubernetes-manifests/persistent-volume-claim.yaml
+kubectl apply -f /opt/projects/sitio-web-k8s/k8sManifests/persistent-volume-claim.yaml
 ```
 
 - Desplegar la aplicación web estática:
 
 ```bash
-kubectl apply -f /opt/projects/sitio-web-k8s/kubernetes-manifests/deployment.yaml
+kubectl apply -f /opt/projects/sitio-web-k8s/k8sManifests/deployment.yaml
 ```
 
 - Crear el servicio para exponer la aplicación:
 
 ```bash
-kubectl apply -f /opt/projects/sitio-web-k8s/kubernetes-manifests/service.yaml
+kubectl apply -f /opt/projects/sitio-web-k8s/k8sManifests/service.yaml
 ```
 
 ### 5. Verificar el despliegue
