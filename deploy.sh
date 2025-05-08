@@ -6,6 +6,59 @@ VOL_PATH="/mnt/data/static-website"
 HTML_PATH="$VOL_PATH/html"
 MANIFEST_PATH="./k8sManifests"
 
+
+
+#existe el comando?
+comando_existe(){
+  command -v "$1" >/dev/null 2>&1
+}
+
+#instalar docker si no lo esta
+instalar_docker(){
+  if comando_existe docker; then
+    echo "Docker ya existe:"
+    docker --version
+    return
+  fi
+  echo "Instalando docker:"
+  # Use Docker's convenience script
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
+            rm get-docker.sh
+            
+            # Add user to the docker group to run Docker without sudo
+            sudo usermod -aG docker $USER
+}
+
+#instalar minikube si no lo esta
+instalar_minikube(){
+  if comando_existe minikube; then
+    echo "Minikube ya existe:"
+    minikube version 
+    return
+  fi 
+  echo "Instalando minikube:"
+  # Usar storage.googleapis para descargar minikube 
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    rm minikube-linux-amd64
+}
+#instalar kubectl si no lo esta
+instalar_kubectl(){
+  if comando_existe kubectl; then
+    echo "Kubectl ya existe:"
+    kubectl version
+    return
+  fi
+    echo "Instalando kubectl:"
+    #Latest
+    KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+}
+instalar_docker;
+instalar_minikube;
+instalar_kubectl;
+
+# MINIKUBE
 # Detectar el driver actual
 DRIVER=$(minikube config get driver 2>/dev/null || echo "docker")
 
