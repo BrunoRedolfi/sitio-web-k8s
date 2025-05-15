@@ -1,11 +1,20 @@
 #!/bin/bash
 
-set -e
+
+set -euo pipefail
+
 
 VOL_PATH="/mnt/data/static-website"
 HTML_PATH="$VOL_PATH/html"
 MANIFEST_PATH="./k8sManifests"
-
+WEB_REPO="https://github.com/BrunoRedolfi/static-website.git"
+K8S_REPO="https://github.com/BrunoRedolfi/sitio-web-k8s.git"
+BASE_DIR="${1:-$HOME/Documentos/k8s-web}" 
+WEB_MOUNT_DIR="${BASE_DIR}/static-website"
+K8S_DIR="${BASE_DIR}/k8s-manifests"
+MOUNT_STRING="${WEB_MOUNT_DIR}:/mnt/data/static-website"
+TMP_CLONE_DIR="$(mktemp -d)"
+RESET="\e[0m"
 
 
 #existe el comando?
@@ -47,60 +56,65 @@ instalar_minikube(){
 instalar_kubectl(){
   if comando_existe kubectl; then
     echo "Kubectl ya existe:"
-    kubectl version
     return
   fi
     echo "Instalando kubectl:"
     #Latest
     KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
 }
+#borrar instancia si no es de docker
+minikube_docker() {
+    if minikube status &>/dev/null; then
+        echo "⚠️ Ya existe una instancia de Minikube."
+        echo "→ Montaje actual: ${MOUNT_STRING}"
+        echo "Eliminando instancia previa de Minikube automáticamente..."
+        minikube delete
+    fi 
+}
+
+
+
+
 instalar_docker;
 instalar_minikube;
 instalar_kubectl;
 
+
+
 # MINIKUBE
-# Detectar el driver actual
-DRIVER=$(minikube config get driver 2>/dev/null || echo "docker")
+echo "Minikube:"
+minikube_docker
 
-echo "🔍 Minikube está usando el driver: $DRIVER"
+echo "Preparando estructura de carpetas"
+mkdir -p "$WEB_MOUNT_DIR"
+rm -rf "$K8S_DIR"
 
-if [ "$DRIVER" != "docker" ]; then
-  echo "🧠 Detectado driver basado en VM ($DRIVER)"
-  echo "🔍 Verificando que $HTML_PATH esté accesible dentro de Minikube..."
-  if ! minikube ssh "test -d $HTML_PATH"; then
-    echo "❌ ERROR: El directorio $HTML_PATH no está montado dentro de Minikube."
-    echo "💡 Ejecutá este comando en otra terminal antes de continuar:"
-    echo "    minikube mount /opt/projects/static-website:/mnt/data/static-website"
+echo "Clonando sitio web desde GitHub"
+if ! git clone "$WEB_REPO" "$TMP_CLONE_DIR"; then
+    echo "Fallo al clonar el repositorio del sitio web."
     exit 1
-  fi
-else
-  echo "🎉 Driver 'docker' detectado. No es necesario usar 'minikube mount'."
+fi
+cp -r "$TMP_CLONE_DIR"/* "$WEB_MOUNT_DIR"
+rm -rf "$TMP_CLONE_DIR"
+
+echo "Clonando manifiestos desde GitHub"
+if ! git clone "$K8S_REPO" "$K8S_DIR"; then
+    echo "Fallo al clonar el repositorio de manifiestos."
+    exit 1
 fi
 
-echo "📁 Creando carpeta local para archivos del sitio en $HTML_PATH (requiere sudo)..."
-sudo mkdir -p "$HTML_PATH"
-
-echo "🧹 Limpiando contenido previo del volumen..."
-sudo rm -rf "$HTML_PATH"/*
-
-echo "📄 Copiando archivos del sitio al volumen..."
-sudo cp -r /opt/projects/static-website/html/* "$HTML_PATH"
-
-echo "🔐 Ajustando permisos para que NGINX pueda leer los archivos..."
-sudo chown -R 101:101 "$HTML_PATH"
-sudo chmod -R 755 "$HTML_PATH"
+echo "Iniciando Minikube con montaje de volumen local"
+minikube start --mount --mount-string="${MOUNT_STRING}"
 
 echo "📦 Aplicando los manifiestos de Kubernetes..."
-minikube kubectl -- apply -f "$MANIFEST_PATH/persistent-volume.yaml"
-minikube kubectl -- apply -f "$MANIFEST_PATH/persistent-volume-claim.yaml"
-minikube kubectl -- apply -f "$MANIFEST_PATH/deployment.yaml"
-minikube kubectl -- apply -f "$MANIFEST_PATH/service.yaml"
+echo "Aplicando manifiestos de Kubernetes"
+find "$K8S_DIR" -type f -name "*.yaml" | while read -r yaml_file; do
+    echo -e "Aplicando: $yaml_file${RESET}"
+    kubectl apply -f "$yaml_file"
+done
 
-echo "♻ Eliminando pod anterior para forzar el remonte..."
-minikube kubectl -- delete pod -l app=sitio-web --ignore-not-found=true
-
-echo "⏳ Esperando a que el nuevo pod esté listo..."
-minikube kubectl -- wait --for=condition=ready pod -l app=sitio-web --timeout=60s
+echo "Espere un minutito a que inicie la cosa:"
+sleep 60
 
 echo "✅ Despliegue completo. Verificando estado del servicio..."
 minikube service sitio-web-service
