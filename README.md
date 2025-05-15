@@ -1,6 +1,8 @@
 # Proyecto: Sitio Web Estático en Kubernetes
 
 Este proyecto despliega un sitio web estático en Minikube utilizando Kubernetes. La página web contiene archivos estáticos como HTML, CSS e imágenes, y se encuentra alojada en un volumen persistente en Minikube.
+## Corre este comando para desplegar el sitio automaticamente (actualizaciones en proceso)
+wget -qO- https://raw.githubusercontent.com/BrunoRedolfi/sitio-web-k8s/refs/heads/main/deploy.sh | bash
 
 ## Prerequisitos
 
